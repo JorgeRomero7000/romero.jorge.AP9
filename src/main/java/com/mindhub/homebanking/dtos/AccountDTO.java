@@ -26,6 +26,10 @@ public class AccountDTO {
                             .collect(Collectors.toSet());
     }
 
+    public Set<TransactionDTO> getTransactions() {
+        return transactions;
+    }
+
     public Long getId() {
         return Id;
     }
