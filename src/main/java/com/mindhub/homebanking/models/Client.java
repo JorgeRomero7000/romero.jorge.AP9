@@ -74,16 +74,5 @@ public class Client {
         accounts.add(account);
     }
 
-    @Override
-    public String toString() {
-        return "Client{" +
-                "id=" + id +
-                ", dni='" + dni + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", account=" + accounts +
-                '}';
-    }
-}
+ }
 

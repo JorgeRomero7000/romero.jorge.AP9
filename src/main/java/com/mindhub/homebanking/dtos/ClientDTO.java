@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ClientDTO {
-    private Long id;
+    private Long Id;
     private String dni;
     private String firstName;
     private String lastName;
@@ -16,7 +16,7 @@ public class ClientDTO {
 
 
     public ClientDTO(Client client) {
-        this.id = client.getId();
+        this.Id = client.getId();
         this.dni = client.getDni();
         this.firstName = client.getFirstName();
         this.lastName = client.getLastName();
@@ -28,7 +28,7 @@ public class ClientDTO {
     }
 
     public Long getId() {
-        return id;
+        return Id;
     }
 
     public String getDni() {

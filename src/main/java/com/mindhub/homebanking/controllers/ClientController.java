@@ -41,8 +41,4 @@ public class ClientController {
         return new ClientDTO(clientOptional.get());
     }
 
-
-
-
-
 }
