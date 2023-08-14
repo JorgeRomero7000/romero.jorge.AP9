@@ -1,18 +1,14 @@
 package com.mindhub.homebanking;
 
-import com.mindhub.homebanking.models.Account;
-import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.models.Transaction;
-import com.mindhub.homebanking.models.TransactionType;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
-import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.models.*;
+import com.mindhub.homebanking.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @SpringBootApplication
 public class HomebankingApplication {
@@ -22,12 +18,20 @@ public class HomebankingApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository){
+	public CommandLineRunner initData(ClientRepository clientRepository,
+									  AccountRepository accountRepository,
+									  TransactionRepository transactionRepository,
+									  LoanRepository loanRepository,
+									  ClientLoanRepository clientLoanRepository){
 		return (args ) -> {
 
 			// Nuevo Cliente 1
 			Client client1 = new Client("44555666","Melba","Morel","melba@mindhub.com");
 			clientRepository.save(client1);
+
+			// Nuevo Cliente 2
+			Client client2 = new Client("42555111","NombreCliente2","ApellidoCliente2","elCliente2@mindhub.com");
+			clientRepository.save(client2);
 
 			// Cuenta VIN001 para Cliente 1
 			Account account1 = new Account("VIN001", LocalDate.now(),5000,client1);
@@ -42,15 +46,39 @@ public class HomebankingApplication {
 			client1.addAccount(account2);
 			accountRepository.save(account2);
 
-			// Nueva transacción para Cliente 1
-
+			// Transacciones para Cliente 1
 			LocalDate otherDay = today.plusDays(4);
-
 			Transaction transaction1 = new Transaction(TransactionType.CREDIT,5000,"Primer credito",otherDay,account1);
 			transactionRepository.save(transaction1);
-
 			Transaction transaction2 = new Transaction(TransactionType.DEBIT,-1000,"Primer debito",otherDay, account1);
 			transactionRepository.save(transaction2);
+
+			// Transacciones para Cliente 2
+			Transaction transaction3 = new Transaction(TransactionType.CREDIT,28000,"Primer credito",otherDay,account2);
+			transactionRepository.save(transaction3);
+
+			Transaction transaction4 = new Transaction(TransactionType.DEBIT,-3785,"Primer debito",otherDay, account2);
+			transactionRepository.save(transaction4);
+
+
+			Loan loan1 = new Loan("Hipotecario",500000,List.of(12,24,36,48,60));
+			loanRepository.save(loan1);
+			Loan loan2 = new Loan("Personal",100000, List.of(6,12,24));
+			loanRepository.save(loan2);
+			Loan loan3 = new Loan("Automotríz",300000, List.of(6,12,24,36));
+			loanRepository.save(loan3);
+
+			// Solicitud de préstamo Cliente 1
+			ClientLoan clientLoan1 = new ClientLoan(60,400000.0,client1,loan1);
+			ClientLoan clientLoan2 = new ClientLoan(12,50000.0,client1,loan2);
+			clientLoanRepository.save(clientLoan1);
+			clientLoanRepository.save(clientLoan2);
+
+			// Solicitud de préstamo Cliente 2
+			ClientLoan clientLoan3 = new ClientLoan(24,100000.0,client2,loan2);
+			ClientLoan clientLoan4 = new ClientLoan(12,50000.0,client2,loan3);
+			clientLoanRepository.save(clientLoan3);
+			clientLoanRepository.save(clientLoan4);
 
 		};
 	}

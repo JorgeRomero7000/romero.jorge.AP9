@@ -18,6 +18,7 @@ public class Account {
     private String number;
     private LocalDate creationDate;
     private double balance;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="client_id")
     private Client client;
