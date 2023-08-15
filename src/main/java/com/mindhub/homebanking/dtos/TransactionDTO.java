@@ -8,14 +8,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TransactionDTO {
-    private Long Id;
+    private Long id;
     private TransactionType type;
     private double amount;
     private String description;
     private LocalDate date;
 
     public TransactionDTO(Transaction transaction) {
-        this.Id=transaction.getId();
+        this.id=transaction.getId();
         this.type= transaction.getType();
         this.amount = transaction.getAmount();
         this.description=transaction.getDescription();
@@ -23,7 +23,7 @@ public class TransactionDTO {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public TransactionType getType() {

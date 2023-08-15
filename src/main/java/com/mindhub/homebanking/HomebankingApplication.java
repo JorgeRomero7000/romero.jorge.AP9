@@ -22,7 +22,8 @@ public class HomebankingApplication {
 									  AccountRepository accountRepository,
 									  TransactionRepository transactionRepository,
 									  LoanRepository loanRepository,
-									  ClientLoanRepository clientLoanRepository){
+									  ClientLoanRepository clientLoanRepository,
+									  CardRepository cardRepository){
 		return (args ) -> {
 
 			// Nuevo Cliente 1
@@ -30,7 +31,7 @@ public class HomebankingApplication {
 			clientRepository.save(client1);
 
 			// Nuevo Cliente 2
-			Client client2 = new Client("42555111","NombreCliente2","ApellidoCliente2","elCliente2@mindhub.com");
+			Client client2 = new Client("42555111","Steve Ray","Vaughan","stivie.ray@mindhub.com");
 			clientRepository.save(client2);
 
 			// Cuenta VIN001 para Cliente 1
@@ -79,6 +80,17 @@ public class HomebankingApplication {
 			ClientLoan clientLoan4 = new ClientLoan(12,50000.0,client2,loan3);
 			clientLoanRepository.save(clientLoan3);
 			clientLoanRepository.save(clientLoan4);
+
+			// Tarjetas
+			otherDay = today.plusYears(5);
+			Card card1 = new Card(client1.getFirstName()+", "+client1.getLastName(),CardType.DEBIT,CardColor.GOLD,"1122-3344-5566-7788","414",today,otherDay,client1);
+			cardRepository.save(card1);
+
+			Card card2 = new Card(client1.getFirstName()+", "+client1.getLastName(),CardType.CREDIT,CardColor.TITANIUM,"7788-6655-4433-0022","969",today,otherDay,client1);
+			cardRepository.save(card2);
+
+			Card card3 = new Card(client2.getFirstName()+", "+client2.getLastName(),CardType.CREDIT,CardColor.SILVER,"3434-7878-5665-1187-0632","119",today,otherDay,client2);
+			cardRepository.save(card3);
 
 		};
 	}

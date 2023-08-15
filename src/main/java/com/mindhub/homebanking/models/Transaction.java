@@ -4,10 +4,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-
 @Entity
 public class Transaction {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -71,7 +69,6 @@ public class Transaction {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
 
     public void setAccount(Account account) {
         this.account = account;
