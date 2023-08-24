@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 public class ClientDTO {
     private Long Id;
-    private String dni;
     private String firstName;
     private String lastName;
     private String email;
@@ -18,7 +17,6 @@ public class ClientDTO {
 
     public ClientDTO(Client client) {
         this.Id = client.getId();
-        this.dni = client.getDni();
         this.firstName = client.getFirstName();
         this.lastName = client.getLastName();
         this.email = client.getEmail();
@@ -40,10 +38,6 @@ public class ClientDTO {
 
     public Long getId() {
         return Id;
-    }
-
-    public String getDni() {
-        return dni;
     }
 
     public String getFirstName() {

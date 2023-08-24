@@ -2,10 +2,12 @@ package com.mindhub.homebanking;
 
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +19,9 @@ public class HomebankingApplication {
 		SpringApplication.run(HomebankingApplication.class, args);
 	}
 
+	@Autowired
+	PasswordEncoder passwordEncoder;
+
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository,
 									  AccountRepository accountRepository,
@@ -27,11 +32,11 @@ public class HomebankingApplication {
 		return (args ) -> {
 
 			// Nuevo Cliente 1
-			Client client1 = new Client("44555666","Melba","Morel","melba@mindhub.com");
+			Client client1 = new Client("Melba","Morel","melba@mindhub.com", passwordEncoder.encode("222"));
 			clientRepository.save(client1);
 
 			// Nuevo Cliente 2
-			Client client2 = new Client("42555111","Steve Ray","Vaughan","stivie.ray@mindhub.com");
+			Client client2 = new Client("Jorge","Romero","aa@aa.com", passwordEncoder.encode("111"));
 			clientRepository.save(client2);
 
 			// Cuenta VIN001 para Cliente 1
@@ -70,15 +75,26 @@ public class HomebankingApplication {
 			loanRepository.save(loan3);
 
 			// Solicitud de préstamo Cliente 1
-			ClientLoan clientLoan1 = new ClientLoan(60,400000.0,client1,loan1);
-			ClientLoan clientLoan2 = new ClientLoan(12,50000.0,client1,loan2);
+			ClientLoan clientLoan1 = new ClientLoan(60,400000.0);
+			client1.addClientLoan(clientLoan1);
+			loan1.addClientLoan(clientLoan1);
 			clientLoanRepository.save(clientLoan1);
+
+			ClientLoan clientLoan2 = new ClientLoan(12,50000.0);
+			client1.addClientLoan(clientLoan2);
+			loan1.addClientLoan(clientLoan2);
 			clientLoanRepository.save(clientLoan2);
 
 			// Solicitud de préstamo Cliente 2
-			ClientLoan clientLoan3 = new ClientLoan(24,100000.0,client2,loan2);
-			ClientLoan clientLoan4 = new ClientLoan(12,50000.0,client2,loan3);
+			ClientLoan clientLoan3 = new ClientLoan(24,100000.0);
+			client2.addClientLoan(clientLoan3);
+			loan2.addClientLoan(clientLoan3);
 			clientLoanRepository.save(clientLoan3);
+
+
+			ClientLoan clientLoan4 = new ClientLoan(12,50000.0);
+			client2.addClientLoan(clientLoan4);
+			loan3.addClientLoan(clientLoan4);
 			clientLoanRepository.save(clientLoan4);
 
 			// Tarjetas

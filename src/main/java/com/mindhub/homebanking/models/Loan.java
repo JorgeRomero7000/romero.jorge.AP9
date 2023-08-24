@@ -17,10 +17,10 @@ public class Loan {
     private String name;
     private Integer maxAmount;
     @ElementCollection
-    @Column(name="payments")
+    @Column(name = "payments")
     private List<Integer> payments = new ArrayList<>();
 
-    @OneToMany(mappedBy="loan", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
     private Set<ClientLoan> clientLoans = new HashSet<>();
 
     public Loan() {
@@ -64,13 +64,10 @@ public class Loan {
         return clientLoans;
     }
 
-    public void addClientLoan(ClientLoan clientLoan){
+    public void addClientLoan(ClientLoan clientLoan) {
         clientLoan.setLoan(this);
         clientLoans.add(clientLoan);
     }
-
-
-
 
 
 }
