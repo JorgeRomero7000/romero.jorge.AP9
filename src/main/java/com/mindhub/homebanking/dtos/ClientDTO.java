@@ -8,9 +8,7 @@ import java.util.stream.Collectors;
 
 public class ClientDTO {
     private Long Id;
-    private String firstName;
-    private String lastName;
-    private String email;
+    private String firstName, lastName, email;
     private Set<AccountDTO> accounts = new HashSet<>();
     private Set<ClientLoanDTO> loans = new HashSet<>();
     private Set<CardDTO> cards = new HashSet<>();
@@ -20,7 +18,7 @@ public class ClientDTO {
         this.firstName = client.getFirstName();
         this.lastName = client.getLastName();
         this.email = client.getEmail();
-        this.accounts = client.getAccount()
+        this.accounts = client.getAccounts()
                             .stream()
                             .map(account -> new AccountDTO(account))
                             .collect(Collectors.toSet());

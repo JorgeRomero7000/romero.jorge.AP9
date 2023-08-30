@@ -4,20 +4,16 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
-
 @Entity
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-    private String firstName;
-    private String lastName;
+    private String firstName, lastName, password;
+    @Column(unique = true)
     private String email;
-    private String password;
-
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Account> accounts = new HashSet<>();
 
@@ -73,7 +69,7 @@ public class Client {
         this.password = password;
     }
 
-    public Set<Account> getAccount() {
+    public Set<Account> getAccounts() {
         return accounts;
     }
 
@@ -98,5 +94,10 @@ public class Client {
     public void addCard(Card card) {
         card.setClient(this);
         cards.add(card);
+    }
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName;
     }
 }

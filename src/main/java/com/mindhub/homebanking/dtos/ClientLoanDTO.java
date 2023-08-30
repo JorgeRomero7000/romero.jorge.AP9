@@ -27,10 +27,6 @@ public class ClientLoanDTO {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Integer getPayments() {
         return payments;
     }

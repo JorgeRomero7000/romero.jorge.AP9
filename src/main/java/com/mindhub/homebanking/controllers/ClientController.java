@@ -14,14 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api")
 public class ClientController {
-
     @Autowired
     private ClientRepository clientRepository;
-
     @GetMapping("/clients")
     public List<ClientDTO> getClients() {
 /*
@@ -54,6 +51,8 @@ public class ClientController {
         return new ClientDTO(client);
     }
 
+
+    // Creación de un nuevo cliente
     @Autowired
     private PasswordEncoder passwordEncoder;
     @RequestMapping(path = "/clients", method = RequestMethod.POST)

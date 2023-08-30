@@ -5,16 +5,15 @@ import com.mindhub.homebanking.models.CardColor;
 import com.mindhub.homebanking.models.CardType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class CardDTO {
     private Long id;
-    private String cardHolder;
+    private String cardHolder, number, cvv;
     private CardType type;
     private CardColor color;
-    private String number;
-    private String cvv;
-    private LocalDate fromDate;
-    private LocalDate thruDate;
+    private LocalDateTime fromDate;
+    private LocalDateTime thruDate;
 
     public CardDTO(Card card){
         this.id = card.getId();
@@ -51,11 +50,11 @@ public class CardDTO {
         return cvv;
     }
 
-    public LocalDate getFromDate() {
+    public LocalDateTime getFromDate() {
         return fromDate;
     }
 
-    public LocalDate getThruDate() {
+    public LocalDateTime getThruDate() {
         return thruDate;
     }
 }

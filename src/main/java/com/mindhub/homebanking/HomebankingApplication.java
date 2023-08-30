@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootApplication
@@ -18,10 +19,8 @@ public class HomebankingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HomebankingApplication.class, args);
 	}
-
 	@Autowired
 	PasswordEncoder passwordEncoder;
-
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository,
 									  AccountRepository accountRepository,
@@ -40,30 +39,45 @@ public class HomebankingApplication {
 			clientRepository.save(client2);
 
 			// Cuenta VIN001 para Cliente 1
-			Account account1 = new Account("VIN001", LocalDate.now(),5000,client1);
+			Account account1 = new Account("VIN001", LocalDateTime.now(),5000);
 			client1.addAccount(account1);
 			accountRepository.save(account1);
 
-			LocalDate today = LocalDate.now();
-			LocalDate tomorrow = today.plusDays(1);
+			LocalDateTime today = LocalDateTime.now();
+			LocalDateTime tomorrow = today.plusDays(1);
 
 			// Nueva cuenta VIN002 para cliente 1
-			Account account2 = new Account("VIN002",tomorrow,7500,client1);
+			Account account2 = new Account("VIN002",tomorrow,7500);
 			client1.addAccount(account2);
 			accountRepository.save(account2);
 
+
+			// Cuenta VIN003 para Cliente 2
+			Account account3 = new Account("VIN003", LocalDateTime.now(),5000);
+			client2.addAccount(account3);
+			accountRepository.save(account3);
+
+			// Nueva cuenta VIN004 para cliente 2
+			Account account4 = new Account("VIN004",tomorrow,7500);
+			client2.addAccount(account4);
+			accountRepository.save(account4);
+
 			// Transacciones para Cliente 1
-			LocalDate otherDay = today.plusDays(4);
-			Transaction transaction1 = new Transaction(TransactionType.CREDIT,5000,"Primer credito",otherDay,account1);
+			LocalDateTime otherDay = today.plusDays(4);
+			Transaction transaction1 = new Transaction(TransactionType.CREDIT,5000,"Primer credito",otherDay);
+			account1.addTransaction(transaction1);
 			transactionRepository.save(transaction1);
-			Transaction transaction2 = new Transaction(TransactionType.DEBIT,-1000,"Primer debito",otherDay, account1);
+			Transaction transaction2 = new Transaction(TransactionType.DEBIT,-1000,"Primer debito",otherDay);
+			account1.addTransaction(transaction2);
 			transactionRepository.save(transaction2);
 
 			// Transacciones para Cliente 2
-			Transaction transaction3 = new Transaction(TransactionType.CREDIT,28000,"Primer credito",otherDay,account2);
+			Transaction transaction3 = new Transaction(TransactionType.CREDIT,28000,"Primer credito",otherDay);
+			account3.addTransaction(transaction3);
 			transactionRepository.save(transaction3);
 
-			Transaction transaction4 = new Transaction(TransactionType.DEBIT,-3785,"Primer debito",otherDay, account2);
+			Transaction transaction4 = new Transaction(TransactionType.DEBIT,-3785,"Primer debito",otherDay);
+			account4.addTransaction(transaction4);
 			transactionRepository.save(transaction4);
 
 
@@ -97,16 +111,16 @@ public class HomebankingApplication {
 			loan3.addClientLoan(clientLoan4);
 			clientLoanRepository.save(clientLoan4);
 
-			// Tarjetas
+/*			// Tarjetas
 			otherDay = today.plusYears(5);
-			Card card1 = new Card(client1.getFirstName()+", "+client1.getLastName(),CardType.DEBIT,CardColor.GOLD,"1122-3344-5566-7788","414",today,otherDay,client1);
+			Card card1 = new Card(client1.getFirstName()+", "+client1.getLastName(),CardType.DEBIT,CardColor.GOLD,"1122-3344-5566-7788","414",today,otherDay);
 			cardRepository.save(card1);
 
-			Card card2 = new Card(client1.getFirstName()+", "+client1.getLastName(),CardType.CREDIT,CardColor.TITANIUM,"7788-6655-4433-0022","969",today,otherDay,client1);
+			Card card2 = new Card(client1.getFirstName()+", "+client1.getLastName(),CardType.CREDIT,CardColor.TITANIUM,"7788-6655-4433-0022","969",today,otherDay);
 			cardRepository.save(card2);
 
-			Card card3 = new Card(client2.getFirstName()+", "+client2.getLastName(),CardType.CREDIT,CardColor.SILVER,"3434-7878-5665-1187-0632","119",today,otherDay,client2);
-			cardRepository.save(card3);
+			Card card3 = new Card(client2.getFirstName()+", "+client2.getLastName(),CardType.CREDIT,CardColor.SILVER,"3434-7878-5665-1187-0632","119",today,otherDay);
+			cardRepository.save(card3);*/
 
 		};
 	}

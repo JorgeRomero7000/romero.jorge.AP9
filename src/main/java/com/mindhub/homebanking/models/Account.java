@@ -1,14 +1,15 @@
 package com.mindhub.homebanking.models;
-
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mindhub.homebanking.repositories.AccountRepository;
 import org.hibernate.annotations.GenericGenerator;
+
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
-
 @Entity
 public class Account {
     @Id
@@ -16,7 +17,8 @@ public class Account {
     @GenericGenerator(name = "native", strategy = "native")
     private Long Id;
     private String number;
-    private LocalDate creationDate;
+    private LocalDateTime creationDate;
+    //private LocalDateTime creationDate;
     private double balance;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -29,11 +31,10 @@ public class Account {
     public Account() {
     }
 
-    public Account(String number, LocalDate creationDate, double balance, Client client) {
+    public Account(String number, LocalDateTime creationDate, double balance) {
         this.number = number;
         this.creationDate = creationDate;
         this.balance = balance;
-        this.client = client;
     }
 
     public Long getId() {
@@ -48,11 +49,11 @@ public class Account {
         this.number = number;
     }
 
-    public LocalDate getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -80,4 +81,19 @@ public class Account {
         transaction.setAccount(this);
         transactions.add(transaction);
     }
+
+    public static String generateAccountNumber(AccountRepository accountRepository){
+        Random random = new Random();
+        int number;
+        String numberAccount;
+        do{
+            //number = UtilsMethods.getRandomNumber(1, 99999999);
+            number = random.nextInt(99999999) + 1;
+            //numberAccount = "VIN-%08d" + number;
+            numberAccount = "VIN" + number;
+        } while(accountRepository.existsByNumber(numberAccount));
+        return numberAccount;
+    }
+
+
 }

@@ -1,6 +1,5 @@
 package com.mindhub.homebanking.configurations;
 
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,10 +20,9 @@ public class WebAuthorization extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/web/index.html", "/web/css/**", "/web/img/**", "/web/js/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/login", "/api/logout","/api/clients").permitAll()
-                .antMatchers("/api/clients").hasAuthority("ADMIN")
-                .antMatchers("/api/clients/current").hasAnyAuthority("CLIENT", "ADMIN")
-                .antMatchers("/web/accounts.html", "/web/cards.html").hasAnyAuthority("CLIENT", "ADMIN");
-
+                .antMatchers("/api/**").hasAnyAuthority("CLIENT", "ADMIN")
+                .antMatchers("/web/**").hasAnyAuthority("CLIENT", "ADMIN")
+                .antMatchers("/rest/**", "/h2-console/**").hasAuthority("ADMIN");
 
         // Me define un recurso POST para hacer el login
         http.formLogin()
@@ -33,7 +31,7 @@ public class WebAuthorization extends WebSecurityConfigurerAdapter {
                 .loginPage("/api/login");
 
         // Me define el recurso para cerrar sesión
-        http.logout().logoutUrl("/api/logout");
+        http.logout().logoutUrl("/api/logout").deleteCookies("JSESSIONID");
 
         // turn off checking for CSRF tokens
         http.csrf().disable();
