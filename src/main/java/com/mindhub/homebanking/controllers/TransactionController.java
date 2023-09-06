@@ -40,10 +40,9 @@ public class TransactionController {
                                                       Authentication authentication){
 
         if(authentication != null){
-
             Client client = clientRepository.findByEmail(authentication.getName());
 
-            if(description.isBlank() || destinyAccountNumber.isBlank() || originAccountNumber.isBlank()){
+            if(description.isBlank() || originAccountNumber.isBlank() || destinyAccountNumber.isBlank()){
                 return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
             }
 
@@ -74,13 +73,12 @@ public class TransactionController {
             String descriptionOrigin = description + " " + destinyAccountNumber;
             String descriptionDestiny = description + " " + originAccountNumber;
 
-            Transaction originAccountTransaction = transactionRepository.save(new Transaction(TransactionType.DEBIT,
-                                                                    -amount, descriptionOrigin, LocalDateTime.now()));
+            Transaction originAccountTransaction = transactionRepository.save(new Transaction(TransactionType.DEBIT, -amount, descriptionOrigin, LocalDateTime.now()));
             originAccount.addTransaction(originAccountTransaction);
             transactionRepository.save(originAccountTransaction);
 
-            Transaction destinyAccountTransaction = transactionRepository.save(new Transaction(TransactionType.CREDIT,
-                                                                     amount, descriptionDestiny,LocalDateTime.now()));
+            Transaction destinyAccountTransaction = transactionRepository.save(new Transaction(TransactionType.CREDIT, amount, descriptionDestiny,LocalDateTime.now()));
+
             destinyAccount.addTransaction(destinyAccountTransaction);
             transactionRepository.save(destinyAccountTransaction);
 

@@ -22,6 +22,8 @@ public class AccountController {
 
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private ClientRepository clientRepository;
 
     @GetMapping("/accounts")
     public List<AccountDTO> getAccounts(){
@@ -32,9 +34,6 @@ public class AccountController {
                 .collect(Collectors.toList());
         return convertedList;
     }
-
-    @Autowired
-    private ClientRepository clientRepository;
 
     @RequestMapping("/accounts/{id}")
     public ResponseEntity<Object> getAccount(@PathVariable Long id, Authentication authentication){
@@ -81,7 +80,6 @@ public class AccountController {
             if(accounts.size() > 3){
                 return new ResponseEntity<>("Account limit reached", HttpStatus.CONFLICT);
             }
-
             // crea una variable de fecha y guarda la fecha actual
             LocalDateTime date = LocalDateTime.now();
             // Crea una variable tipo String y le asigna el valor que devuelve el método "gnerateAccountNumber" de la

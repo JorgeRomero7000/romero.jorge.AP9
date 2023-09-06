@@ -18,7 +18,6 @@ public class Account {
     private Long Id;
     private String number;
     private LocalDateTime creationDate;
-    //private LocalDateTime creationDate;
     private double balance;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -49,13 +48,9 @@ public class Account {
         this.number = number;
     }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
+    public LocalDateTime getCreationDate() {return creationDate;}
 
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
+    public void setCreationDate(LocalDateTime creationDate) {this.creationDate = creationDate;}
 
     public double getBalance() {
         return balance;
@@ -87,13 +82,9 @@ public class Account {
         int number;
         String numberAccount;
         do{
-            //number = UtilsMethods.getRandomNumber(1, 99999999);
             number = random.nextInt(99999999) + 1;
-            //numberAccount = "VIN-%08d" + number;
             numberAccount = "VIN" + number;
         } while(accountRepository.existsByNumber(numberAccount));
         return numberAccount;
     }
-
-
 }

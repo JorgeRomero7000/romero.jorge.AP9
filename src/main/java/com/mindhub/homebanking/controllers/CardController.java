@@ -66,7 +66,7 @@ public class CardController {
                 }
             }
 
-            // create card
+            // crear tarjeta
             String cardHolder = client.toString();
             String number = Card.generateCardNumber(cardRepository);
             String cvv = Card.generateCvv(cardRepository);

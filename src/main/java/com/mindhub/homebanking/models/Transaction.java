@@ -47,9 +47,7 @@ public class Transaction {
         return description;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
+    public LocalDateTime getDate() {return date;}
 
     public Account getAccount() {
         return account;
@@ -67,9 +65,7 @@ public class Transaction {
         this.description = description;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
+    public void setDate(LocalDateTime date) {this.date = date;}
 
     public void setAccount(Account account) {
         this.account = account;
