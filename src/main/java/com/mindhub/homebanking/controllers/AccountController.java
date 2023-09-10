@@ -4,6 +4,8 @@ import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,26 +23,22 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
+    // Recupera lista de cuentas DTO
     @GetMapping("/accounts")
     public List<AccountDTO> getAccounts(){
-        List<Account> allAccounts = accountRepository.findAll();
-        List<AccountDTO> convertedList = allAccounts
-                .stream()
-                .map(currentAccount -> new AccountDTO(currentAccount))
-                .collect(Collectors.toList());
-        return convertedList;
+        return accountService.getAccounts();
     }
 
     @RequestMapping("/accounts/{id}")
     public ResponseEntity<Object> getAccount(@PathVariable Long id, Authentication authentication){
 
         if (authentication != null) {
-            Client client = clientRepository.findByEmail(authentication.getName());
-            Account account = accountRepository.findById(id).orElse(null);
+            Client client = clientService.findByEmail(authentication.getName());
+            Account account = accountService.findByID(id);
 
             if (account == null) {
                 return new ResponseEntity<>("This account does not exist", HttpStatus.NOT_FOUND);
@@ -59,7 +57,7 @@ public class AccountController {
     @GetMapping("/clients/current/accounts")
     public Set<AccountDTO> getAccounts(Authentication authentication) {
         // Busca el cliente autenticado
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientService.findByEmail(authentication.getName());
         return client.getAccounts().stream().map(AccountDTO::new).collect(Collectors.toSet());
     }
 
@@ -72,7 +70,7 @@ public class AccountController {
         // Si el cliente existe...
         if (authentication != null){
            // Crea una variable "client" que contiene el email del nombre del cliente autenticado
-            Client client = clientRepository.findByEmail(authentication.getName());
+            Client client = clientService.findByEmail(authentication.getName());
             // Crea un set de cuentas con las cuentas del cliente
             Set<Account> accounts = client.getAccounts();
 
@@ -84,7 +82,14 @@ public class AccountController {
             LocalDateTime date = LocalDateTime.now();
             // Crea una variable tipo String y le asigna el valor que devuelve el método "gnerateAccountNumber" de la
             // clase Account (el String con prefijo y número aleatorio de la cuenta)
-            String numberAccount = Account.generateAccountNumber(accountRepository);
+
+            String numberAccount;
+            do {
+                numberAccount = Account.generateAccountNumber();
+            }while(accountService.existsByNumber(numberAccount));
+
+
+
             // Crea una variable "balance" tipo double y la inicializa en CERO
             double balance = 0;
 
@@ -94,7 +99,7 @@ public class AccountController {
             // Agrega la cuenta al cliente (método addAccount en clase "Client" y le pasa la cuenta recién creada
             client.addAccount(account);
             // A través del repositorio de account, graba los datos de la cuenta (crea un registro en la tabla Account)
-            accountRepository.save(account);
+            accountService.accountSave(account);
             // Devuelve la petición a través de una nueva respuesta, donde pasa el estado "creado"
             return new ResponseEntity<>(HttpStatus.CREATED);
         }

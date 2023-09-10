@@ -7,6 +7,9 @@ import com.mindhub.homebanking.models.TransactionType;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +28,11 @@ import java.time.LocalDateTime;
 public class TransactionController {
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    private TransactionService transactionService;
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Transactional
     @RequestMapping(path = "/transactions", method = RequestMethod.POST)
@@ -40,7 +43,7 @@ public class TransactionController {
                                                       Authentication authentication){
 
         if(authentication != null){
-            Client client = clientRepository.findByEmail(authentication.getName());
+            Client client = clientService.findByEmail(authentication.getName());
 
             if(description.isBlank() || originAccountNumber.isBlank() || destinyAccountNumber.isBlank()){
                 return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
@@ -54,13 +57,13 @@ public class TransactionController {
                 return new ResponseEntity<>("You cannot transfer to the same originating account", HttpStatus.FORBIDDEN);
             }
 
-            Account destinyAccount = accountRepository.findByNumber(destinyAccountNumber);
+            Account destinyAccount = accountService.findByNumber(destinyAccountNumber);
 
             if(destinyAccount == null){
                 return new ResponseEntity<>("Destination account does not exist.", HttpStatus.FORBIDDEN);
             }
 
-            Account originAccount = accountRepository.findByNumber(originAccountNumber);
+            Account originAccount = accountService.findByNumber(originAccountNumber);
 
             if (!originAccount.getClient().equals(client)){
                 return new ResponseEntity<>("You don't have access to this account.", HttpStatus.FORBIDDEN);
@@ -73,17 +76,19 @@ public class TransactionController {
             String descriptionOrigin = description + " " + destinyAccountNumber;
             String descriptionDestiny = description + " " + originAccountNumber;
 
-            Transaction originAccountTransaction = transactionRepository.save(new Transaction(TransactionType.DEBIT, -amount, descriptionOrigin, LocalDateTime.now()));
+            //Transaction originAccountTransaction = transactionService.transactionSave(new Transaction(TransactionType.DEBIT, -amount, descriptionOrigin, LocalDateTime.now()));
+            Transaction originAccountTransaction = new Transaction(TransactionType.DEBIT, -amount, descriptionOrigin, LocalDateTime.now());
             originAccount.addTransaction(originAccountTransaction);
-            transactionRepository.save(originAccountTransaction);
+            transactionService.transactionSave(originAccountTransaction);
 
-            Transaction destinyAccountTransaction = transactionRepository.save(new Transaction(TransactionType.CREDIT, amount, descriptionDestiny,LocalDateTime.now()));
+            //Transaction destinyAccountTransaction = transactionService.transactionSave(new Transaction(TransactionType.CREDIT, amount, descriptionDestiny,LocalDateTime.now()));
+            Transaction destinyAccountTransaction = new Transaction(TransactionType.CREDIT, amount, descriptionDestiny,LocalDateTime.now());
 
             destinyAccount.addTransaction(destinyAccountTransaction);
-            transactionRepository.save(destinyAccountTransaction);
+            transactionService.transactionSave(destinyAccountTransaction);
 
-            accountRepository.save(originAccount);
-            accountRepository.save(destinyAccount);
+            accountService.accountSave(originAccount);
+            accountService.accountSave(destinyAccount);
 
             return new ResponseEntity<>("Successful transfer", HttpStatus.CREATED);
         }

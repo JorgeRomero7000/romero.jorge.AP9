@@ -7,6 +7,8 @@ import com.mindhub.homebanking.models.CardType;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.CardRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.CardService;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,15 +30,16 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/api")
 public class CardController {
     @Autowired
-    ClientRepository clientRepository;
+    private CardService cardService;
     @Autowired
-    CardRepository cardRepository;
+    private ClientService clientService;
+
 
     @RequestMapping(path = "/clients/current/cards", method = RequestMethod.POST)
     public ResponseEntity<Object> createCard(Authentication authentication, CardColor cardColor, CardType cardType) {
 
         if (authentication != null) {
-            Client client = clientRepository.findByEmail(authentication.getName());
+            Client client = clientService.findByEmail(authentication.getName());
 
             // Verificación de la cantidad de tarjetas
             Set<Card> cards = client.getCards();
@@ -68,14 +71,24 @@ public class CardController {
 
             // crear tarjeta
             String cardHolder = client.toString();
-            String number = Card.generateCardNumber(cardRepository);
-            String cvv = Card.generateCvv(cardRepository);
+            //String number = Card.generateCardNumber(cardRepository);
+            String number;
+            do{
+                number = Card.generateCardNumber();
+            } while(cardService.existsByNumber(number));
+
+            String cvv;
+
+            do {
+                cvv = Card.generateCvv();
+            } while(cardService.existsByCvv(cvv));
+
             LocalDateTime thruDate = LocalDateTime.now().plusYears(5);
             LocalDateTime fromDate = LocalDateTime.now();
 
             Card card = new Card(cardHolder, cardType, cardColor, number, cvv, fromDate, thruDate);
             client.addCard(card);
-            cardRepository.save(card);
+            cardService.cardSave(card);
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
         return new ResponseEntity<>("You are not logged it", HttpStatus.FORBIDDEN);
@@ -83,7 +96,7 @@ public class CardController {
 
     @GetMapping("/clients/current/cards")
     public List<CardDTO> getCurrentAccounts(Authentication authentication){
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientService.findByEmail(authentication.getName());
 
         return client.getCards().stream().map(CardDTO::new).collect(toList());
     }

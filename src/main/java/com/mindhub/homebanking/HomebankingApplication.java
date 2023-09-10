@@ -28,7 +28,7 @@ public class HomebankingApplication {
 									  ClientLoanRepository clientLoanRepository,
 									  CardRepository cardRepository){
 		return (args ) -> {
-
+/*
 			// Creación de Préstamos del banco
 			Loan loan1 = new Loan("Hipotecario",500000,List.of(12,24,36,48,60));
 			loanRepository.save(loan1);
@@ -36,13 +36,15 @@ public class HomebankingApplication {
 			loanRepository.save(loan2);
 			Loan loan3 = new Loan("Automotríz",300000, List.of(6,12,24,36));
 			loanRepository.save(loan3);
-
+*/
 
 			/*
 			*************************
 				C L I E N T E   1
 			*************************
 			 */
+
+/*
 			// Creación Cliente 1
 			Client client1 = new Client("Melba","Morel","melba@mindhub.com", passwordEncoder.encode("222"));
 			clientRepository.save(client1);
@@ -61,12 +63,22 @@ public class HomebankingApplication {
 
 			// Transacciones para Cliente 1
 			LocalDateTime otherDay = today.plusDays(4);
-			Transaction transaction1 = new Transaction(TransactionType.CREDIT,5000,"Primer credito",otherDay);
+
+			Transaction transaction1 = new Transaction(TransactionType.CREDIT,5000,"Primer credito",today);
 			account1.addTransaction(transaction1);
 			transactionRepository.save(transaction1);
-			Transaction transaction2 = new Transaction(TransactionType.DEBIT,-1000,"Primer debito",otherDay);
+			Transaction transaction2 = new Transaction(TransactionType.DEBIT,-1000,"Primer debito",today);
 			account1.addTransaction(transaction2);
 			transactionRepository.save(transaction2);
+
+			otherDay = today.plusDays(1);
+			Transaction transaction5 = new Transaction(TransactionType.CREDIT,3500,"Primer credito",otherDay);
+			account2.addTransaction(transaction5);
+			transactionRepository.save(transaction5);
+			Transaction transaction6 = new Transaction(TransactionType.DEBIT,-2900,"Primer debito",otherDay);
+			account2.addTransaction(transaction6);
+			transactionRepository.save(transaction6);
+
 
 			// Solicitud de préstamo Cliente 1
 			ClientLoan clientLoan1 = new ClientLoan(60,400000.0);
@@ -78,13 +90,14 @@ public class HomebankingApplication {
 			client1.addClientLoan(clientLoan2);
 			loan1.addClientLoan(clientLoan2);
 			clientLoanRepository.save(clientLoan2);
-
+*/
 //***********************************************************************************
 			/*
 			*************************
 				C L I E N T E   2
 			*************************
 			 */
+/*
 			// Nuevo Cliente 2
 			Client client2 = new Client("Jorge","Romero","aa@aa.com", passwordEncoder.encode("111"));
 			clientRepository.save(client2);

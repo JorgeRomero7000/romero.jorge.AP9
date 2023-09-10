@@ -110,9 +110,8 @@ public class Card {
     //******************************************************
     // Se debe mover el método generateCardNumber del modelo
     //******************************************************
-    public static String generateCardNumber(CardRepository cardRepository){
+    public static String generateCardNumber(){
          String numberCard = "";
-        do{
             for (int i = 0; i < 4; i++ ) {
                 int number = (int)((Math.random() * (9999 - 1000)) + 1000);
                 numberCard = numberCard + number;
@@ -121,17 +120,14 @@ public class Card {
                     numberCard+= "-";
                 }
             }
-        } while(cardRepository.existsByNumber(numberCard.toString()));
-        return numberCard.toString();
+        return numberCard;
     }
-    public static String generateCvv(CardRepository _cardRepository){
+    public static String generateCvv(){
         Random random = new Random();
         int number;
         number = random.nextInt(999) + 1;
         String cvv;
-        do{
             cvv = String.format("%03d", number);
-        } while(_cardRepository.existsByCvv(cvv));
         return cvv;
     }
 }

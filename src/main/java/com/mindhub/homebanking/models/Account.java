@@ -15,7 +15,7 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private Long Id;
+    private Long id;
     private String number;
     private LocalDateTime creationDate;
     private double balance;
@@ -37,7 +37,7 @@ public class Account {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public String getNumber() {
@@ -75,16 +75,17 @@ public class Account {
     public void addTransaction(Transaction transaction) {
         transaction.setAccount(this);
         transactions.add(transaction);
+        //Balance update:
+        this.balance += transaction.getAmount();
     }
 
-    public static String generateAccountNumber(AccountRepository accountRepository){
+    public static String generateAccountNumber(){
         Random random = new Random();
         int number;
         String numberAccount;
-        do{
-            number = random.nextInt(99999999) + 1;
-            numberAccount = "VIN" + number;
-        } while(accountRepository.existsByNumber(numberAccount));
+        number = random.nextInt(99999999) + 1;
+        numberAccount = "VIN" + number;
+
         return numberAccount;
     }
 }
