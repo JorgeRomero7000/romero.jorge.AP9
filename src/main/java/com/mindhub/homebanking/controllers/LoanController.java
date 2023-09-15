@@ -3,11 +3,7 @@ package com.mindhub.homebanking.controllers;
 import com.mindhub.homebanking.dtos.LoanApplicationDTO;
 import com.mindhub.homebanking.dtos.LoanDTO;
 import com.mindhub.homebanking.models.*;
-import com.mindhub.homebanking.repositories.*;
-import com.mindhub.homebanking.services.AccountService;
-import com.mindhub.homebanking.services.ClientService;
-import com.mindhub.homebanking.services.LoanService;
-import com.mindhub.homebanking.services.TransactionService;
+import com.mindhub.homebanking.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +27,8 @@ public class LoanController {
     private TransactionService transactionService;
     @Autowired
     private LoanService loanService;
+    @Autowired
+    private ClientLoanService clientLoanService;
 
 @GetMapping("/loans")
 public List<LoanDTO> getLoans(){
@@ -38,7 +36,7 @@ public List<LoanDTO> getLoans(){
 }
 
 @Transactional
-@RequestMapping(value="/loans", method= RequestMethod.POST)
+@PostMapping(value="/loans")
 public ResponseEntity<Object> applyLoan(@RequestBody LoanApplicationDTO loanApplicationDTO, Authentication authentication){
     if (authentication != null){
         Client client = clientService.findByEmail(authentication.getName());
@@ -78,21 +76,16 @@ public ResponseEntity<Object> applyLoan(@RequestBody LoanApplicationDTO loanAppl
         client.addClientLoan(clientLoan);
         loan.addClientLoan(clientLoan);
 
-
         //transaction
         String description = loan.getName() + " Loan approved.";
         Transaction transaction = new Transaction(TransactionType.CREDIT, loanApplicationDTO.getAmount(), description, LocalDateTime.now());
         accountTarget.addTransaction(transaction);
         transactionService.transactionSave(transaction);
         accountService.accountSave(accountTarget);
-        loanService.loanSave(loan);
-
-
+        clientLoanService.saveClientLoan (clientLoan);
 
         return new ResponseEntity<>("A loan has been successfully requested" ,HttpStatus.CREATED);
     }
-
     return new ResponseEntity<>("You are not logged it", HttpStatus.FORBIDDEN);
     }
-
 }

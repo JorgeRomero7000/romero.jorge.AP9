@@ -1,22 +1,18 @@
 package com.mindhub.homebanking.controllers;
-import com.mindhub.homebanking.dtos.AccountDTO;
+
 import com.mindhub.homebanking.dtos.CardDTO;
 import com.mindhub.homebanking.models.Card;
 import com.mindhub.homebanking.models.CardColor;
 import com.mindhub.homebanking.models.CardType;
 import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.repositories.CardRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.services.CardService;
 import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,18 +31,23 @@ public class CardController {
     private ClientService clientService;
 
 
-    @RequestMapping(path = "/clients/current/cards", method = RequestMethod.POST)
+    @PostMapping(path = "/clients/current/cards")
     public ResponseEntity<Object> createCard(Authentication authentication, CardColor cardColor, CardType cardType) {
 
         if (authentication != null) {
             Client client = clientService.findByEmail(authentication.getName());
+
+            if (cardType == null || cardColor == null) {
+                return new ResponseEntity<>("Missing data", HttpStatus.NO_CONTENT);
+            }
+
 
             // Verificación de la cantidad de tarjetas
             Set<Card> cards = client.getCards();
             Set<Card> creditCards = cards.stream().filter(card -> card.getType() == CardType.CREDIT).collect(Collectors.toSet());
             Set<Card> debitCards = cards.stream().filter(card -> card.getType() == CardType.DEBIT).collect(Collectors.toSet());
 
-            // Verificación de tarjetas de crédito
+            // Verificación número máximo tarjetas de crédito
             if (cardType == CardType.CREDIT) {
                 // Si el tamaño del "set" es menor que 3...
                 if (creditCards.size() < 3) {
@@ -59,6 +60,7 @@ public class CardController {
                         return new ResponseEntity<>("You have reached the credit card limit", HttpStatus.FORBIDDEN);
                 }
             }
+            // Verificación número máximo tarjetas de débito
             if (cardType == CardType.DEBIT) {
                 if (debitCards.size() < 3) {
                     if (debitCards.stream().anyMatch(card -> card.getColor().equals(cardColor))) {
@@ -74,13 +76,13 @@ public class CardController {
             //String number = Card.generateCardNumber(cardRepository);
             String number;
             do{
-                number = Card.generateCardNumber();
+                number = CardUtils.generateCardNumber();
             } while(cardService.existsByNumber(number));
 
             String cvv;
 
             do {
-                cvv = Card.generateCvv();
+                cvv = CardUtils.generateCvv();
             } while(cardService.existsByCvv(cvv));
 
             LocalDateTime thruDate = LocalDateTime.now().plusYears(5);

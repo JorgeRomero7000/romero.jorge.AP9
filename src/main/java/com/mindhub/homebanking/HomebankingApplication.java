@@ -18,8 +18,11 @@ public class HomebankingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HomebankingApplication.class, args);
 	}
-	@Autowired
-	PasswordEncoder passwordEncoder;
+
+	// NOTA: Comentar las 2 líneas de abajo para ejecutar los Test
+	// @Autowired
+	//PasswordEncoder passwordEncoder;
+
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository,
 									  AccountRepository accountRepository,
@@ -131,7 +134,7 @@ public class HomebankingApplication {
 			client2.addClientLoan(clientLoan4);
 			loan3.addClientLoan(clientLoan4);
 			clientLoanRepository.save(clientLoan4);
-
+*/
 /*
 		// Tarjetas: Creación manual de tarjetas. Luego, fue reemplazado por programación.
 			otherDay = today.plusYears(5);

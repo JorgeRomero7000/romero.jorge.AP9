@@ -20,13 +20,25 @@ bootRun {
 }
 
 dependencies {
-	implementation 'org.postgresql:postgresql'
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	//*********** La línea de abajo es para que muestre en la consola de IntelliJ los
+	// comandos que se van ejecutando en las tablas de la base de datos: ****************
+	//spring.jpa.properties.hibernate.show_sql=true
+
+	//********** ESTA LINEA ES PARA ACTIVAR EL MOTOR DE BBDD H2 **************
 	// runtimeOnly 'com.h2database:h2'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//********** ESTA LINEA ES PARA ACTIVAR EL MOTOR DE BBDD POSTGRES **************
+	implementation 'org.postgresql:postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// **** Esto es para devolver en formato XML
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {

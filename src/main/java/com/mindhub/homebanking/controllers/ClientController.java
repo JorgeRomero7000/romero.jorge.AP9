@@ -6,6 +6,7 @@ import com.mindhub.homebanking.models.Client;
 
 import com.mindhub.homebanking.services.AccountService;
 import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,13 +56,14 @@ public class ClientController {
         return clientService.getClientById(id);
     }
 
-    @RequestMapping("/clients/current")
+    //@RequestMapping("/clients/current")
+    @GetMapping("/clients/current")
     public ClientDTO getCurrentClient(Authentication authentication) {
         return clientService.getCurrentClient(authentication.getName());
     }
 
     // Creación de un nuevo cliente
-    @RequestMapping(path = "/clients", method = RequestMethod.POST)
+    @PostMapping(path = "/clients")
     public ResponseEntity<Object> register(
             @RequestParam String firstName, @RequestParam String lastName,
             @RequestParam String email, @RequestParam String password) {
@@ -78,10 +80,9 @@ public class ClientController {
         //Generación de un número aleatorio para la cuenta nueva
         String numAccount;
 
-        do {
-            Random random = new Random();
-            numAccount = "VIN-" + random.nextInt(90000000);
-        } while (accountService.findByNumber(numAccount) != null);
+          do {
+              numAccount = AccountUtils.generateAccountNumber();
+          }while (accountService.findByNumber(numAccount) != null);
 
         // Se crea una cuenta nueva
         // Se agrega al cliente
@@ -91,15 +92,6 @@ public class ClientController {
         clientService.clientAdd(client);
         accountService.accountSave(account);
     }
-
-
-
-
-
-
-
-
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
